@@ -141,7 +141,7 @@ class BMP085(object):
 		X1 = ((UT - self.cal_AC6) * self.cal_AC5) >> 15
 		X2 = (self.cal_MC << 11) / (X1 + self.cal_MD)
 		B5 = X1 + X2
-		temp = ((B5 + 8) >> 4) / 10.0
+		temp = float(int(B5 + 8) >> 4) / 10.0
 		self._logger.debug('Calibrated temperature {0} C'.format(temp))
 		return temp
 
@@ -161,13 +161,13 @@ class BMP085(object):
 		# Pressure Calculations
 		B6 = B5 - 4000
 		self._logger.debug('B6 = {0}'.format(B6))
-		X1 = (self.cal_B2 * (B6 * B6) >> 12) >> 11
-		X2 = (self.cal_AC2 * B6) >> 11
+		X1 = int(self.cal_B2 * int(B6 * B6) >> 12) >> 11
+		X2 = int(self.cal_AC2 * B6) >> 11
 		X3 = X1 + X2
 		B3 = (((self.cal_AC1 * 4 + X3) << self._mode) + 2) / 4
 		self._logger.debug('B3 = {0}'.format(B3))
-		X1 = (self.cal_AC3 * B6) >> 13
-		X2 = (self.cal_B1 * ((B6 * B6) >> 12)) >> 16
+		X1 = int(self.cal_AC3 * B6) >> 13
+		X2 = int(self.cal_B1 * (int(B6 * B6) >> 12)) >> 16
 		X3 = ((X1 + X2) + 2) >> 2
 		B4 = (self.cal_AC4 * (X3 + 32768)) >> 15
 		self._logger.debug('B4 = {0}'.format(B4))
@@ -177,9 +177,9 @@ class BMP085(object):
 			p = (B7 * 2) / B4
 		else:
 			p = (B7 / B4) * 2
-		X1 = (p >> 8) * (p >> 8)
+		X1 = (int(p) >> 8) * (int(p) >> 8)
 		X1 = (X1 * 3038) >> 16
-		X2 = (-7357 * p) >> 16
+		X2 = int(-7357 * p) >> 16
 		p = p + ((X1 + X2 + 3791) >> 4)
 		self._logger.debug('Pressure {0} Pa'.format(p))
 		return p
